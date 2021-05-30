@@ -6,6 +6,7 @@ const peer = new Peer(undefined, {
 });
 let myVideoStream;
 let myId;
+let userCount=0;
 var videoGrid = document.getElementById('videoDiv')
 var myvideo = document.createElement('video');
 myvideo.muted = true;
@@ -38,9 +39,13 @@ peer.on('error' , (err)=>{
 });
 socket.on('userJoined' , id=>{
   console.log("new user joined")
+  userCount = userCount + 1;
+  console.log(userCount);
   document.getElementById('audio').innerHTML = "New User connected, Lets chat"
+  document.getElementById('userCount').innerHTML = "Number of users " + userCount;
   setTimeout(()=>{
-    document.getElementById('audio').innerHTML = ""
+    document.getElementById('audio').innerHTML = "";
+    document.getElementById('userCount').innerHTML = "";
   }, 3000)
   const call  = peer.call(id , myVideoStream);
   const vid = document.createElement('video');
@@ -53,10 +58,13 @@ socket.on('userJoined' , id=>{
   call.on('close' , ()=>{
     vid.remove();
     console.log("user disconect")
+    userCount = userCount - 1;
     document.getElementById('audio').innerHTML = "One user disconnected"
+    document.getElementById('userCount').innerHTML = "Number of users " + userCount;
     setTimeout(()=>{
-      document.getElementById('audio').innerHTML = ""
-    }, 3000)
+      document.getElementById('audio').innerHTML = "";
+      document.getElementById('userCount').innerHTML = "";
+    }, 5000)
   })
   peerConnections[id] = call;
 })
@@ -72,3 +80,4 @@ function addVideo(video , stream){
   })
   videoGrid.append(video);
 }
+
